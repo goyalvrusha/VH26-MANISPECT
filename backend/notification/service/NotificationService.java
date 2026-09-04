@@ -2,7 +2,10 @@ package notification.service;
 
 import notification.routing.NotificationChannel;
 import notification.routing.NotificationRouter;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class NotificationService {
 
     private final NotificationRouter router;

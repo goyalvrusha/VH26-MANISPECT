@@ -1,0 +1,12 @@
+{
+  "alert_id": "ALT-001",
+  "service": "payment-service",
+  "title": "Payment API latency high",
+  "description": "P95 latency exceeded the configured threshold",
+  "severity": "HIGH",
+  "status": "FIRING",
+  "notification": {
+    "should_notify": true,
+    "reason": "severity_requires_notification"
+  }
+}

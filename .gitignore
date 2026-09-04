@@ -1,0 +1,4 @@
+@"
+*.class
+target/
+"@ | Set-Content .gitignore

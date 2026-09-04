@@ -1,26 +1,21 @@
 package alert_fatigue_backend.controller;
 
 import alert_fatigue_backend.alert.Alert;
-import alert_fatigue_backend.repository.AlertRepository;
+import alert_fatigue_backend.intelligence.AlertIntelligenceService;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/alerts")
 public class AlertController {
 
-    private final AlertRepository alertRepository;
+    private final AlertIntelligenceService intelligenceService;
 
-    public AlertController(AlertRepository alertRepository) {
-        this.alertRepository = alertRepository;
+    public AlertController(AlertIntelligenceService intelligenceService) {
+        this.intelligenceService = intelligenceService;
     }
 
     @PostMapping
     public Alert receiveAlert(@RequestBody Alert alert) {
-        return alertRepository.save(alert);
+        return intelligenceService.process(alert);
     }
-    @GetMapping
-public List<Alert> getAlerts() {
-    return alertRepository.findAll();
-}
 }

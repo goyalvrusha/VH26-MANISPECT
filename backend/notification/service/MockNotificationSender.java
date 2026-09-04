@@ -7,14 +7,16 @@ public class MockNotificationSender {
     public NotificationResult send(
             String alertId,
             NotificationChannel channel,
-            String message) {
+            String message,
+            String reason) {
 
         if (channel == NotificationChannel.NONE) {
             return new NotificationResult(
                     alertId,
                     "NONE",
                     "SKIPPED",
-                    "Notification skipped"
+                    "Notification skipped",
+                    reason
             );
         }
 
@@ -26,7 +28,8 @@ public class MockNotificationSender {
                 alertId,
                 channel.name(),
                 "SENT",
-                message
+                message,
+                reason
         );
     }
-}  
+}

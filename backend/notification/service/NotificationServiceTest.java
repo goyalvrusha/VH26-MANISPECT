@@ -8,57 +8,37 @@ public class NotificationServiceTest {
         NotificationFormatter formatter = new NotificationFormatter();
 
         testAlert(
-                service,
-                formatter,
-                "ALT-001",
-                "payment-service",
-                "HighCPU",
-                "CRITICAL",
-                "CRITICAL",
+                service, formatter,
+                "ALT-001", "payment-service", "HighCPU",
+                "CRITICAL", "CRITICAL",
                 "CPU usage above 95%"
         );
 
         testAlert(
-                service,
-                formatter,
-                "ALT-002",
-                "payment-service",
-                "HighCPU",
-                "HIGH",
-                "WARNING",
+                service, formatter,
+                "ALT-002", "payment-service", "HighCPU",
+                "HIGH", "WARNING",
                 "CPU usage above 90%"
         );
 
         testAlert(
-                service,
-                formatter,
-                "ALT-003",
-                "payment-service",
-                "HighCPU",
-                "MEDIUM",
-                "WARNING",
+                service, formatter,
+                "ALT-003", "payment-service", "HighCPU",
+                "MEDIUM", "WARNING",
                 "CPU usage above 80%"
         );
 
         testAlert(
-                service,
-                formatter,
-                "ALT-004",
-                "payment-service",
-                "HighCPU",
-                "LOW",
-                "INFO",
+                service, formatter,
+                "ALT-004", "payment-service", "HighCPU",
+                "LOW", "INFO",
                 "CPU usage returned to normal range"
         );
 
         testAlert(
-                service,
-                formatter,
-                "ALT-005",
-                "payment-service",
-                "HighCPU",
-                "CRITICAL",
-                "CRITICAL",
+                service, formatter,
+                "ALT-005", "payment-service", "HighCPU",
+                "CRITICAL", "CRITICAL",
                 "CPU usage above 95%",
                 false
         );
@@ -107,11 +87,16 @@ public class NotificationServiceTest {
                 message
         );
 
+        String reason = shouldNotify
+                ? "NEW_ALERT"
+                : "COOLDOWN";
+
         NotificationResult result = service.process(
                 id,
                 shouldNotify,
                 priority,
-                formattedMessage
+                formattedMessage,
+                reason
         );
 
         System.out.println(
@@ -120,6 +105,7 @@ public class NotificationServiceTest {
                 + " | ShouldNotify: " + shouldNotify
                 + " | Channel: " + result.getChannel()
                 + " | Status: " + result.getStatus()
+                + " | Reason: " + result.getReason()
         );
 
         System.out.println(

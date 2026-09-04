@@ -21,7 +21,8 @@ public class NotificationService {
             String alertId,
             boolean shouldNotify,
             String priority,
-            String message) {
+            String message,
+            String reason) {
 
         NotificationChannel channel =
                 router.route(shouldNotify, priority);
@@ -29,13 +30,13 @@ public class NotificationService {
         switch (channel) {
 
             case SLACK:
-                return slackSender.send(alertId, message);
+                return slackSender.send(alertId, message, reason);
 
             case PAGERDUTY:
-                return pagerDutySender.send(alertId, message);
+                return pagerDutySender.send(alertId, message, reason);
 
             case EMAIL:
-                return emailSender.send(alertId, message);
+                return emailSender.send(alertId, message, reason);
 
             case NONE:
             default:
@@ -43,7 +44,8 @@ public class NotificationService {
                         alertId,
                         "NONE",
                         "SKIPPED",
-                        "Notification skipped"
+                        "Notification skipped",
+                        reason
                 );
         }
     }

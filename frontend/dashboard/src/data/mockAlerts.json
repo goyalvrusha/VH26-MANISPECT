@@ -1,0 +1,102 @@
+[
+  {
+    "id": "ALT-001",
+    "fingerprint": "payment-service-high-cpu",
+    "source": "prometheus",
+    "alertName": "HighCPU",
+    "service": "payment-service",
+    "severity": "WARNING",
+    "priority": "HIGH",
+    "status": "FIRING",
+    "message": "CPU usage above 90%",
+    "occurrenceCount": 15,
+    "flapping": false,
+    "groupId": "GRP-001",
+    "firstSeen": "2026-09-04T09:30:00",
+    "lastSeen": "2026-09-04T10:00:00",
+    "notification": {
+      "shouldNotify": true,
+      "reason": "NEW_ALERT"
+    }
+  },
+  {
+    "id": "ALT-002",
+    "fingerprint": "payment-service-high-memory",
+    "source": "prometheus",
+    "alertName": "HighMemory",
+    "service": "payment-service",
+    "severity": "CRITICAL",
+    "priority": "URGENT",
+    "status": "FIRING",
+    "message": "Memory usage above 95%",
+    "occurrenceCount": 24,
+    "flapping": false,
+    "groupId": "GRP-001",
+    "firstSeen": "2026-09-04T09:35:00",
+    "lastSeen": "2026-09-04T10:02:00",
+    "notification": {
+      "shouldNotify": false,
+      "reason": "CORRELATED_ALERT"
+    }
+  },
+  {
+    "id": "ALT-003",
+    "fingerprint": "auth-service-db-latency",
+    "source": "prometheus",
+    "alertName": "DatabaseLatencyHigh",
+    "service": "auth-service",
+    "severity": "CRITICAL",
+    "priority": "URGENT",
+    "status": "FIRING",
+    "message": "Postgres query latency > 500ms",
+    "occurrenceCount": 42,
+    "flapping": false,
+    "groupId": "GRP-002",
+    "firstSeen": "2026-09-04T08:15:00",
+    "lastSeen": "2026-09-04T10:05:00",
+    "notification": {
+      "shouldNotify": true,
+      "reason": "SEVERITY_ESCALATION"
+    }
+  },
+  {
+    "id": "ALT-004",
+    "fingerprint": "inventory-api-flapping-ping",
+    "source": "cloudwatch",
+    "alertName": "EndpointUnreachable",
+    "service": "inventory-service",
+    "severity": "WARNING",
+    "priority": "MEDIUM",
+    "status": "FIRING",
+    "message": "Ping timeout on health check endpoint",
+    "occurrenceCount": 18,
+    "flapping": true,
+    "groupId": null,
+    "firstSeen": "2026-09-04T09:00:00",
+    "lastSeen": "2026-09-04T10:08:00",
+    "notification": {
+      "shouldNotify": false,
+      "reason": "FLAPPING_SUPPRESSED"
+    }
+  },
+  {
+    "id": "ALT-005",
+    "fingerprint": "gateway-rate-limit-exceeded",
+    "source": "datadog",
+    "alertName": "RateLimitExceeded",
+    "service": "api-gateway",
+    "severity": "CRITICAL",
+    "priority": "HIGH",
+    "status": "RESOLVED",
+    "message": "429 Too Many Requests threshold exceeded",
+    "occurrenceCount": 51,
+    "flapping": false,
+    "groupId": "GRP-002",
+    "firstSeen": "2026-09-04T07:40:00",
+    "lastSeen": "2026-09-04T09:50:00",
+    "notification": {
+      "shouldNotify": false,
+      "reason": "COOLDOWN_ACTIVE"
+    }
+  }
+]

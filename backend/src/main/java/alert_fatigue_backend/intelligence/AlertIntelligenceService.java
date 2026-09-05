@@ -25,7 +25,6 @@ public class AlertIntelligenceService {
 
         alert.setFingerprint(fingerprint);
 
-        // Check whether this alert already exists.
         var existingAlert =
                 alertRepository.findByFingerprint(fingerprint);
 
@@ -34,14 +33,16 @@ public class AlertIntelligenceService {
             Alert duplicate = existingAlert.get();
 
             duplicate.setOccurrenceCount(
-        duplicate.getOccurrenceCount() + 1
-);
+                    duplicate.getOccurrenceCount() + 1
+            );
 
-duplicate.setLastSeen(alert.getLastSeen());
-duplicate.setStatus(alert.getStatus());
-duplicate.setMessage(alert.getMessage());
+            duplicate.setLastSeen(alert.getLastSeen());
 
             return alertRepository.save(duplicate);
+        }
+
+        if (alert.getOccurrenceCount() <= 0) {
+            alert.setOccurrenceCount(1);
         }
 
         return alertRepository.save(alert);
@@ -49,10 +50,10 @@ duplicate.setMessage(alert.getMessage());
 
     public NotificationDecision decideNotification(Alert alert) {
 
-        if ("CRITICAL".equalsIgnoreCase(alert.getSeverity())) {
+        if (alert.getOccurrenceCount() > 1) {
             return new NotificationDecision(
-                    true,
-                    "severity_requires_notification"
+                    false,
+                    "duplicate_alert"
             );
         }
 

@@ -3,6 +3,7 @@ package alert_fatigue_backend.controller;
 import alert_fatigue_backend.alert.Alert;
 import alert_fatigue_backend.intelligence.AlertIntelligenceService;
 import alert_fatigue_backend.intelligence.NotificationDecision;
+import alert_fatigue_backend.monitoring.MonitoringService;
 import notification.service.NotificationResult;
 import notification.service.NotificationService;
 import notification.service.ProcessedAlert;
@@ -14,17 +15,20 @@ public class AlertController {
 
     private final AlertIntelligenceService intelligenceService;
     private final NotificationService notificationService;
+    private final MonitoringService monitoringService;
 
     public AlertController(
             AlertIntelligenceService intelligenceService,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            MonitoringService monitoringService) {
 
         this.intelligenceService = intelligenceService;
         this.notificationService = notificationService;
+        this.monitoringService = monitoringService;
     }
 
     @PostMapping
-    public NotificationResult receiveAlert(
+    public AlertResponse receiveAlert(
             @RequestBody AlertRequest request) {
 
         Alert alert = new Alert();
@@ -43,15 +47,20 @@ public class AlertController {
         alert.setFirstSeen(request.getFirstSeen());
         alert.setLastSeen(request.getLastSeen());
 
-        // Person 1: fingerprint + deduplication
+        // Person 1: alert intelligence, fingerprinting and deduplication
         Alert processedAlert =
                 intelligenceService.process(alert);
+
+        // Person 3: record processed alert
+        monitoringService.recordAlertProcessed(
+                processedAlert.getId()
+        );
 
         // Person 1: notification decision
         NotificationDecision decision =
                 intelligenceService.decideNotification(processedAlert);
 
-        // Person 1 ? Person 2
+        // Person 1 -> Person 2
         ProcessedAlert notificationAlert =
                 new ProcessedAlert(
                         processedAlert.getId(),
@@ -65,7 +74,37 @@ public class AlertController {
                 );
 
         // Person 2: routing + notification delivery
-        return notificationService.process(notificationAlert);
+        NotificationResult delivery =
+                notificationService.process(notificationAlert);
+
+        // Person 3: record notification outcome
+        if (!decision.isShouldNotify()) {
+
+            monitoringService.recordNotificationSkipped(
+                    processedAlert.getId(),
+                    decision.getReason()
+            );
+
+        } else if ("SENT".equalsIgnoreCase(delivery.getStatus())) {
+
+            monitoringService.recordNotificationSent(
+                    processedAlert.getId(),
+                    delivery.getChannel()
+            );
+
+        } else {
+
+            monitoringService.recordNotificationFailed(
+                    processedAlert.getId(),
+                    delivery.getReason()
+            );
+        }
+
+        return new AlertResponse(
+                processedAlert,
+                decision,
+                delivery
+        );
     }
 
     public static class AlertRequest {
@@ -193,4 +232,10 @@ public class AlertController {
             this.lastSeen = lastSeen;
         }
     }
+
+    public record AlertResponse(
+            Alert alert,
+            NotificationDecision notification,
+            NotificationResult delivery
+    ) {}
 }

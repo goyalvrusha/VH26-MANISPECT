@@ -64,26 +64,23 @@ public class NotificationService {
             );
         }
 
-        NotificationResult lastResult = null;
-
         for (NotificationChannel channel : channels) {
 
             for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
 
-                lastResult = send(
+                NotificationResult result = send(
                         channel,
                         alert.getId(),
                         formattedMessage,
                         alert.getReason()
                 );
 
-                if ("SENT".equalsIgnoreCase(lastResult.getStatus())) {
-                    return lastResult;
+                if ("SENT".equalsIgnoreCase(result.getStatus())) {
+                    return result;
                 }
             }
         }
 
-        // Every channel failed.
         notificationQueue.enqueue(
                 alert.getId(),
                 formattedMessage,

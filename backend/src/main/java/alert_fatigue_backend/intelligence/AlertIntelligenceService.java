@@ -2,8 +2,6 @@ package alert_fatigue_backend.intelligence;
 
 import alert_fatigue_backend.alert.Alert;
 import alert_fatigue_backend.repository.AlertRepository;
-import notification.service.NotificationResult;
-import notification.service.NotificationService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,16 +9,13 @@ public class AlertIntelligenceService {
 
     private final AlertFingerprintService fingerprintService;
     private final AlertRepository alertRepository;
-    private final NotificationService notificationService;
 
     public AlertIntelligenceService(
             AlertFingerprintService fingerprintService,
-            AlertRepository alertRepository,
-            NotificationService notificationService) {
+            AlertRepository alertRepository) {
 
         this.fingerprintService = fingerprintService;
         this.alertRepository = alertRepository;
-        this.notificationService = notificationService;
     }
 
     public Alert process(Alert alert) {
@@ -65,19 +60,6 @@ public class AlertIntelligenceService {
         return new NotificationDecision(
                 true,
                 "severity_requires_notification"
-        );
-    }
-
-    public NotificationResult sendNotification(
-            Alert alert,
-            NotificationDecision decision) {
-
-        return notificationService.process(
-                alert.getId(),
-                decision.isShouldNotify(),
-                alert.getPriority(),
-                alert.getMessage(),
-                decision.getReason()
         );
     }
 }

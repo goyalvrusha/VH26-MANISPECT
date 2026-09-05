@@ -18,13 +18,19 @@ public class NotificationService {
     private final NotificationFormatter formatter;
     private final NotificationQueue notificationQueue;
 
+    // Used by existing tests and manual Java usage.
     public NotificationService() {
+        this(new NotificationQueue());
+    }
+
+    // Used by Spring so the shared queue is injected.
+    public NotificationService(NotificationQueue notificationQueue) {
         this.router = new NotificationRouter();
         this.slackSender = new SlackNotificationSender();
         this.pagerDutySender = new PagerDutyNotificationSender();
         this.emailSender = new EmailNotificationSender();
         this.formatter = new NotificationFormatter();
-        this.notificationQueue = new NotificationQueue();
+        this.notificationQueue = notificationQueue;
     }
 
     public NotificationResult process(ProcessedAlert alert) {
@@ -50,7 +56,7 @@ public class NotificationService {
 
         List<NotificationChannel> channels =
                 router.getFallbackChannels(
-                        alert.isShouldNotify(),
+                        true,
                         alert.getPriority()
                 );
 
@@ -94,6 +100,48 @@ public class NotificationService {
                 "FAILED",
                 "All notification channels failed. Alert queued for retry.",
                 alert.getReason()
+        );
+    }
+
+    public NotificationResult retryQueuedNotification(
+            NotificationQueue.QueuedNotification queued) {
+
+        List<NotificationChannel> channels =
+                router.getFallbackChannels(
+                        true,
+                        queued.getPriority()
+                );
+
+        for (NotificationChannel channel : channels) {
+
+            for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+
+                NotificationResult result = send(
+                        channel,
+                        queued.getAlertId(),
+                        queued.getMessage(),
+                        queued.getReason()
+                );
+
+                if ("SENT".equalsIgnoreCase(result.getStatus())) {
+                    return result;
+                }
+            }
+        }
+
+        notificationQueue.enqueue(
+                queued.getAlertId(),
+                queued.getMessage(),
+                queued.getPriority(),
+                queued.getReason()
+        );
+
+        return new NotificationResult(
+                queued.getAlertId(),
+                "QUEUE",
+                "FAILED",
+                "Queued notification retry failed. Kept in queue.",
+                queued.getReason()
         );
     }
 

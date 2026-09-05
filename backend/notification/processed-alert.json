@@ -1,12 +1,62 @@
-{
-  "alert_id": "ALT-001",
-  "service": "payment-service",
-  "title": "Payment API latency high",
-  "description": "P95 latency exceeded the configured threshold",
-  "severity": "HIGH",
-  "status": "FIRING",
-  "notification": {
-    "should_notify": true,
-    "reason": "severity_requires_notification"
+[
+  {
+    "id": "ALT-001",
+    "fingerprint": "payment-service-high-cpu",
+    "source": "prometheus",
+    "alertName": "HighCPU",
+    "service": "payment-service",
+    "severity": "WARNING",
+    "priority": "HIGH",
+    "status": "FIRING",
+    "message": "CPU usage above 90%",
+    "occurrenceCount": 7,
+    "flapping": false,
+    "groupId": "GRP-001",
+    "firstSeen": "2026-09-04T09:30:00",
+    "lastSeen": "2026-09-04T10:00:00",
+    "notification": {
+      "shouldNotify": true,
+      "reason": "NEW_ALERT"
+    }
+  },
+  {
+    "id": "ALT-002",
+    "fingerprint": "order-service-high-memory",
+    "source": "prometheus",
+    "alertName": "HighMemory",
+    "service": "order-service",
+    "severity": "CRITICAL",
+    "priority": "CRITICAL",
+    "status": "FIRING",
+    "message": "Memory usage above 95%",
+    "occurrenceCount": 3,
+    "flapping": false,
+    "groupId": "GRP-002",
+    "firstSeen": "2026-09-04T10:05:00",
+    "lastSeen": "2026-09-04T10:15:00",
+    "notification": {
+      "shouldNotify": true,
+      "reason": "CRITICAL_ALERT"
+    }
+  },
+  {
+    "id": "ALT-003",
+    "fingerprint": "user-service-high-latency",
+    "source": "prometheus",
+    "alertName": "HighLatency",
+    "service": "user-service",
+    "severity": "INFO",
+    "priority": "LOW",
+    "status": "RESOLVED",
+    "message": "Response latency returned to normal",
+    "occurrenceCount": 1,
+    "flapping": false,
+    "groupId": "GRP-003",
+    "firstSeen": "2026-09-04T10:20:00",
+    "lastSeen": "2026-09-04T10:25:00",
+    "notification": {
+      "shouldNotify": false,
+      "reason": "RESOLVED_ALERT"
+    }
   }
-}
+]

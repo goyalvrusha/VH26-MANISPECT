@@ -1,5 +1,10 @@
 package alert_fatigue_backend.controller;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import alert_fatigue_backend.alert.Alert;
 import alert_fatigue_backend.intelligence.AlertIntelligenceService;
 import alert_fatigue_backend.intelligence.NotificationDecision;
@@ -7,7 +12,6 @@ import alert_fatigue_backend.monitoring.MonitoringService;
 import notification.service.NotificationResult;
 import notification.service.NotificationService;
 import notification.service.ProcessedAlert;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/alerts")
@@ -52,9 +56,7 @@ public class AlertController {
                 intelligenceService.process(alert);
 
         // Person 3: record processed alert
-        monitoringService.recordAlertProcessed(
-                processedAlert.getId()
-        );
+        monitoringService.recordAlertProcessed(processedAlert);
 
         // Person 1: notification decision
         NotificationDecision decision =
@@ -81,21 +83,22 @@ public class AlertController {
         if (!decision.isShouldNotify()) {
 
             monitoringService.recordNotificationSkipped(
-                    processedAlert.getId(),
+                    processedAlert,
                     decision.getReason()
             );
 
         } else if ("SENT".equalsIgnoreCase(delivery.getStatus())) {
 
             monitoringService.recordNotificationSent(
-                    processedAlert.getId(),
+                    processedAlert,
                     delivery.getChannel()
             );
 
         } else {
 
             monitoringService.recordNotificationFailed(
-                    processedAlert.getId(),
+                    processedAlert,
+                    delivery.getChannel(),
                     delivery.getReason()
             );
         }

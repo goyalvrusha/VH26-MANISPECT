@@ -11,21 +11,47 @@ import org.springframework.web.bind.annotation.RestController;
 public class MonitoringController {
 
     private final MonitoringMetrics monitoringMetrics;
+    private final MonitoringService monitoringService;
 
-    public MonitoringController(MonitoringMetrics monitoringMetrics) {
+    public MonitoringController(
+            MonitoringMetrics monitoringMetrics,
+            MonitoringService monitoringService) {
+
         this.monitoringMetrics = monitoringMetrics;
+        this.monitoringService = monitoringService;
     }
 
     @GetMapping("/status")
     public Map<String, Object> getStatus() {
 
+        double total = monitoringMetrics.getAlertsProcessed();
+        double skipped = monitoringMetrics.getNotificationsSkipped();
+
+        double suppressionRate =
+                total > 0 ? (skipped / total) * 100 : 0;
+
         return Map.of(
                 "service", "alert-fatigue-backend",
                 "monitoring", "active",
-                "alertsProcessed", monitoringMetrics.getAlertsProcessed(),
-                "notificationsSent", monitoringMetrics.getNotificationsSent(),
-                "notificationsSkipped", monitoringMetrics.getNotificationsSkipped(),
-                "notificationsFailed", monitoringMetrics.getNotificationsFailed()
+
+                "alertsProcessed", total,
+                "uniqueAlerts", monitoringService.getUniqueAlerts(),
+                "duplicateAlerts", monitoringService.getDuplicateAlerts(),
+
+                "notificationsSent",
+                monitoringMetrics.getNotificationsSent(),
+
+                "notificationsSkipped",
+                skipped,
+
+                "notificationsFailed",
+                monitoringMetrics.getNotificationsFailed(),
+
+                "suppressionRate",
+                suppressionRate,
+
+                "recentEvents",
+                monitoringService.getRecentEvents()
         );
     }
 }

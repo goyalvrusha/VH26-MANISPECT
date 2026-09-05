@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alert Fatigue Monitoring</title>
+    <title>MANISPECT | Alert Intelligence</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -12,541 +13,1201 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
+            font-family: Inter, Arial, sans-serif;
+            background: #07111f;
+            color: #e8eef7;
             min-height: 100vh;
-            line-height: 1.5;
         }
 
-        /* HEADER */
-        .header {
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
-            padding: 24px 40px;
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 28px;
+        }
+
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 20px;
+            margin-bottom: 28px;
         }
 
-        .header-title h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #f8fafc;
-            letter-spacing: -0.5px;
+        .brand h1 {
+            font-size: 30px;
+            letter-spacing: 1px;
         }
 
-        .header-title p {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 4px;
+        .brand p {
+            color: #8291a7;
+            margin-top: 6px;
         }
 
-        .live-status {
+        .live {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
+            gap: 9px;
+            padding: 10px 16px;
+            border: 1px solid #20324a;
+            border-radius: 30px;
+            background: #0c1929;
             font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
         }
 
-        .live-dot {
+        .dot {
             width: 9px;
             height: 9px;
             border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 10px #22c55e;
-            animation: pulse 2s infinite;
+            background: #35d07f;
+            box-shadow: 0 0 12px #35d07f;
         }
 
-        .live-status.offline {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #f87171;
+        .offline .dot {
+            background: #ef5b6d;
+            box-shadow: 0 0 12px #ef5b6d;
         }
 
-        .live-status.offline .live-dot {
-            background: #ef4444;
-            box-shadow: 0 0 10px #ef4444;
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
-        }
-
-        /* CONTAINER */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 32px 40px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #cbd5e1;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .dashboard-section {
-            margin-bottom: 36px;
-        }
-
-        /* OVERVIEW CARDS */
         .cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card,
+        .panel {
+            background: #0c1828;
+            border: 1px solid #1b2b40;
+            border-radius: 14px;
         }
 
         .card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            padding: 22px;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            border-color: #475569;
-        }
-
-        .card-label {
-            color: #94a3b8;
+        .label {
+            color: #8291a7;
             font-size: 13px;
-            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
+            letter-spacing: .8px;
         }
 
-        .card-value {
-            font-size: 38px;
-            font-weight: 800;
-            color: #f8fafc;
-            line-height: 1.1;
-        }
-
-        .card-description {
-            margin-top: 10px;
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        /* PANELS */
-        .panel {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 28px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .health-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .health-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f8fafc;
-        }
-
-        .health-description {
-            margin-top: 4px;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .health-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
-            font-size: 13px;
+        .value {
+            font-size: 34px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 12px;
         }
 
-        .health-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
+        .success {
+            color: #4fe39b;
         }
 
-        .health-badge.offline {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #f87171;
+        .warning {
+            color: #f5c451;
         }
 
-        .health-badge.offline .health-dot {
-            background: #ef4444;
+        .danger {
+            color: #ff6678;
         }
 
-        /* STATS GRID */
-        .stats-grid {
+        .blue {
+            color: #62a8ff;
+        }
+
+        .grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
+            margin-bottom: 20px;
         }
 
-        .stat-box {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 20px;
+        .panel {
+            padding: 22px;
         }
 
-        .stat-box strong {
-            display: block;
-            font-size: 28px;
-            font-weight: 700;
-            color: #38bdf8;
-            margin-bottom: 4px;
+        .panel h2 {
+            font-size: 17px;
+            margin-bottom: 18px;
         }
 
-        .stat-box span {
-            color: #94a3b8;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        /* PROGRESS BARS */
-        .progress-container {
-            margin-top: 24px;
-        }
-
-        .progress-label {
+        .metric-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin: 14px 0 8px;
+            color: #9aa9bc;
             font-size: 13px;
-            font-weight: 500;
-            color: #94a3b8;
         }
 
-        .progress {
-            height: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 9999px;
+        .bar {
+            height: 8px;
+            background: #17273a;
+            border-radius: 10px;
             overflow: hidden;
         }
 
-        .progress-bar {
+        .bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #0284c7, #22c55e);
-            border-radius: 9999px;
-            transition: width 0.5s ease-in-out;
-        }
-
-        /* ERROR MESSAGE BANNER */
-        .error-message {
-            margin-top: 20px;
-            padding: 14px 18px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 10px;
-            color: #fca5a5;
-            display: none;
-            font-size: 14px;
-            font-weight: 500;
+            transition: width .4s ease;
         }
 
-        /* FOOTER */
-        .footer-info {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #1e293b;
-            color: #64748b;
+        .dedup-main {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .mini {
+            padding: 17px;
+            background: #101f32;
+            border-radius: 10px;
+        }
+
+        .mini span {
+            display: block;
+            color: #7e8fa6;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .mini strong {
+            font-size: 24px;
+        }
+
+        .channels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .channel {
+            padding: 18px;
+            background: #101f32;
+            border-radius: 10px;
+        }
+
+        .channel-name {
+            color: #9eacc0;
             font-size: 13px;
-            text-align: center;
         }
 
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 1024px) {
+        .channel-count {
+            font-size: 27px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1150px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            color: #71839b;
+            padding: 12px 10px;
+            border-bottom: 1px solid #203047;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #152438;
+            color: #c7d2df;
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background: #101f32;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .critical {
+            background: #3b1820;
+            color: #ff7180;
+        }
+
+        .high {
+            background: #392b13;
+            color: #f4c85e;
+        }
+
+        .medium {
+            background: #172d45;
+            color: #67aaff;
+        }
+
+        .low {
+            background: #183024;
+            color: #63d99c;
+        }
+
+        .sent {
+            background: #153426;
+            color: #5ce19b;
+        }
+
+        .skipped {
+            background: #332b17;
+            color: #e8c55d;
+        }
+
+        .failed {
+            background: #3b1820;
+            color: #ff6678;
+        }
+
+        .timeline {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .event {
+            display: flex;
+            gap: 15px;
+            padding: 13px 0;
+            border-bottom: 1px solid #18273a;
+        }
+
+        .event-time {
+            color: #687a92;
+            min-width: 85px;
+            font-size: 12px;
+        }
+
+        .event-title {
+            font-weight: 600;
+        }
+
+        .event-message {
+            color: #8191a7;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .routing {
+            display: grid;
+            gap: 10px;
+        }
+
+        .route {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 15px;
+            background: #101f32;
+            border-radius: 9px;
+        }
+
+        .route span:first-child {
+            font-weight: 600;
+        }
+
+        .route span:last-child {
+            color: #7e91aa;
+        }
+
+        .refresh {
+            color: #687a92;
+            font-size: 12px;
+            margin-top: 16px;
+            text-align: right;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #687a92;
+        }
+
+        @media (max-width: 1000px) {
+
             .cards {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
 
-        @media (max-width: 768px) {
-            .stats-grid {
+            .grid {
                 grid-template-columns: 1fr;
             }
-            .container {
-                padding: 24px 20px;
-            }
-            .header {
-                padding: 20px;
-                flex-direction: column;
-                align-items: flex-start;
+
+            .dedup-main,
+            .channels {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 600px) {
-            .cards {
+
+            .container {
+                padding: 15px;
+            }
+
+            .cards,
+            .dedup-main,
+            .channels {
                 grid-template-columns: 1fr;
+            }
+
+            header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
 
-<header class="header">
-    <div class="header-title">
-        <h1>Alert Fatigue Monitoring</h1>
-        <p>Real-time operational monitoring for alerts and notifications</p>
-    </div>
+<div class="container">
 
-    <div id="liveStatus" class="live-status">
-        <span class="live-dot"></span>
-        <span id="liveStatusText">CONNECTING</span>
-    </div>
-</header>
+    <!-- HEADER -->
 
-<main class="container">
+    <header>
 
-    <!-- SECTION 1: OPERATIONAL OVERVIEW -->
-    <section class="dashboard-section">
-        <h2 class="section-title">Operational Overview</h2>
-        <div class="cards">
-            <div class="card">
-                <div class="card-label">Alerts Processed</div>
-                <div id="alertsProcessed" class="card-value">0</div>
-                <div class="card-description">Total alerts processed by backend</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">Notifications Sent</div>
-                <div id="notificationsSent" class="card-value">0</div>
-                <div class="card-description">Successfully delivered notifications</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">Notifications Skipped</div>
-                <div id="notificationsSkipped" class="card-value">0</div>
-                <div class="card-description">Notifications suppressed by deduplication</div>
-            </div>
-
-            <div class="card">
-                <div class="card-label">Notifications Failed</div>
-                <div id="notificationsFailed" class="card-value">0</div>
-                <div class="card-description">Failed notification attempts</div>
-            </div>
+        <div class="brand">
+            <h1>MANISPECT</h1>
+            <p>Alert Intelligence & Fatigue Monitoring</p>
         </div>
+
+        <div class="live" id="liveStatus">
+            <span class="dot"></span>
+            <span id="liveText">CONNECTING</span>
+        </div>
+
+    </header>
+
+
+    <!-- TOP METRICS -->
+
+    <section class="cards">
+
+        <div class="card">
+            <div class="label">Alerts Processed</div>
+            <div class="value blue" id="alertsProcessed">0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Notifications Sent</div>
+            <div class="value success" id="notificationsSent">0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Notifications Skipped</div>
+            <div class="value warning" id="notificationsSkipped">0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Notifications Failed</div>
+            <div class="value danger" id="notificationsFailed">0</div>
+        </div>
+
     </section>
 
-    <!-- SECTION 2: SYSTEM HEALTH -->
-    <section class="dashboard-section">
-        <h2 class="section-title">System Health</h2>
+
+    <!-- PERFORMANCE + HEALTH -->
+
+    <section class="grid">
+
         <div class="panel">
-            <div class="health-row">
-                <div>
-                    <div class="health-title">Backend Monitoring Service</div>
-                    <div class="health-description">Operational status of Spring Boot monitoring API</div>
-                </div>
 
-                <div id="healthBadge" class="health-badge">
-                    <span class="health-dot"></span>
-                    <span id="healthText">CHECKING</span>
-                </div>
+            <h2>Notification Performance</h2>
+
+            <div class="metric-row">
+                <span>Successful Delivery</span>
+                <strong id="successRate">0%</strong>
             </div>
 
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Monitoring availability</span>
-                    <strong id="availabilityText">0%</strong>
-                </div>
-                <div class="progress">
-                    <div id="availabilityBar" class="progress-bar"></div>
-                </div>
+            <div class="bar">
+                <div class="bar-fill success" id="successBar"></div>
             </div>
 
-            <div id="errorMessage" class="error-message">
-                Unable to connect to the backend monitoring API (/api/monitoring/status). Retrying automatically...
+            <div class="metric-row">
+                <span>Failure Rate</span>
+                <strong id="failureRate">0%</strong>
             </div>
+
+            <div class="bar">
+                <div class="bar-fill danger" id="failureBar"></div>
+            </div>
+
+            <div class="metric-row">
+                <span>Suppression Rate</span>
+                <strong id="suppressionRate">0%</strong>
+            </div>
+
+            <div class="bar">
+                <div class="bar-fill warning" id="suppressionBar"></div>
+            </div>
+
         </div>
-    </section>
 
-    <!-- SECTION 3: NOTIFICATION PERFORMANCE -->
-    <section class="dashboard-section">
-        <h2 class="section-title">Notification Performance</h2>
+
         <div class="panel">
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <strong id="totalNotifications">0</strong>
-                    <span>Total notification attempts</span>
-                </div>
 
-                <div class="stat-box">
-                    <strong id="successRate">0%</strong>
-                    <span>Notification success rate</span>
-                </div>
+            <h2>System Health</h2>
 
-                <div class="stat-box">
-                    <strong id="failureRate">0%</strong>
-                    <span>Notification failure rate</span>
-                </div>
+            <div class="mini">
+                <span>Backend Service</span>
+                <strong id="serviceName">—</strong>
             </div>
 
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Successful notification delivery</span>
-                    <strong id="successProgressText">0%</strong>
-                </div>
-                <div class="progress">
-                    <div id="successProgressBar" class="progress-bar"></div>
-                </div>
+            <div class="mini" style="margin-top:10px">
+                <span>Monitoring</span>
+                <strong class="success" id="monitoringState">—</strong>
             </div>
+
+            <div class="refresh">
+                Auto refresh: 5 seconds
+            </div>
+
         </div>
+
     </section>
 
-    <!-- SECTION 4: MONITORING INFORMATION -->
-    <section class="dashboard-section">
-        <h2 class="section-title">Monitoring Information</h2>
+
+    <!-- DEDUPLICATION -->
+
+    <section class="panel" style="margin-bottom:20px">
+
+        <h2>Deduplication & Alert Fatigue</h2>
+
+        <div class="dedup-main">
+
+            <div class="mini">
+                <span>Total Alerts</span>
+                <strong id="totalAlerts">0</strong>
+            </div>
+
+            <div class="mini">
+                <span>Unique Alerts</span>
+                <strong id="uniqueAlerts">0</strong>
+            </div>
+
+            <div class="mini">
+                <span>Duplicate Alerts</span>
+                <strong class="warning" id="duplicateAlerts">0</strong>
+            </div>
+
+            <div class="mini">
+                <span>Suppression Rate</span>
+                <strong class="success" id="dedupRate">0%</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHANNEL BREAKDOWN -->
+
+    <section class="panel" style="margin-bottom:20px">
+
+        <h2>Notification Channel Breakdown</h2>
+
+        <div class="channels">
+
+            <div class="channel">
+                <div class="channel-name">PagerDuty</div>
+                <div class="channel-count" id="pagerDutyCount">0</div>
+            </div>
+
+            <div class="channel">
+                <div class="channel-name">Slack</div>
+                <div class="channel-count" id="slackCount">0</div>
+            </div>
+
+            <div class="channel">
+                <div class="channel-name">Email</div>
+                <div class="channel-count" id="emailCount">0</div>
+            </div>
+
+            <div class="channel">
+                <div class="channel-name">Suppressed</div>
+                <div class="channel-count warning" id="suppressedCount">0</div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ALERT INTELLIGENCE -->
+
+    <section class="grid">
+
         <div class="panel">
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <strong id="serviceName">-</strong>
-                    <span>Backend service</span>
+
+            <h2>Alert Intelligence & Routing</h2>
+
+            <div class="routing">
+
+                <div class="route">
+                    <span>CRITICAL</span>
+                    <span>→ PagerDuty</span>
                 </div>
 
-                <div class="stat-box">
-                    <strong id="lastUpdated">-</strong>
-                    <span>Last successful update</span>
+                <div class="route">
+                    <span>HIGH</span>
+                    <span>→ Slack</span>
                 </div>
 
-                <div class="stat-box">
-                    <strong>5 sec</strong>
-                    <span>Automatic refresh interval</span>
+                <div class="route">
+                    <span>MEDIUM</span>
+                    <span>→ Slack</span>
                 </div>
+
+                <div class="route">
+                    <span>LOW</span>
+                    <span>→ Email</span>
+                </div>
+
+                <div class="route">
+                    <span>DUPLICATE</span>
+                    <span>→ Suppressed</span>
+                </div>
+
             </div>
+
         </div>
+
+
+        <div class="panel">
+
+            <h2>Live Status</h2>
+
+            <div class="mini">
+
+                <span>Last Successful Update</span>
+
+                <strong
+                    style="font-size:16px"
+                    id="lastUpdate">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
     </section>
 
-    <div class="footer-info">
-        Alert Fatigue Monitoring Dashboard • Live operational monitoring enabled
-    </div>
 
-</main>
+    <!-- LIVE ALERT ACTIVITY -->
+
+    <section class="panel" style="margin-bottom:20px">
+
+        <h2>Live Alert Activity</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>Timestamp</th>
+                    <th>Alert ID</th>
+                    <th>Alert Name</th>
+                    <th>Service</th>
+                    <th>Severity</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Occurrences</th>
+                    <th>Decision</th>
+                    <th>Channel</th>
+                    <th>Delivery</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="activityTable">
+
+                <tr>
+
+                    <td colspan="11" class="empty">
+                        Waiting for alert activity...
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT EVENT TIMELINE -->
+
+    <section class="panel">
+
+        <h2>Recent Event Timeline</h2>
+
+        <div class="timeline" id="timeline">
+
+            <div class="empty">
+                Waiting for monitoring events...
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
 
 <script>
-    let backendAvailable = false;
 
-    /**
-     * Load live monitoring data from Spring Boot endpoint /api/monitoring/status
-     */
-    async function loadMonitoringData() {
+    const API = "/api/monitoring/status";
+
+
+    async function loadDashboard() {
+
         try {
-            const response = await fetch("/api/monitoring/status", {
-                cache: "no-store"
-            });
+
+            const response =
+                await fetch(API + "?t=" + Date.now(), {
+                    cache: "no-store"
+                });
 
             if (!response.ok) {
-                throw new Error("Monitoring API returned HTTP " + response.status);
+                throw new Error("Backend unavailable");
             }
 
             const data = await response.json();
 
-            // Convert numeric backend values safely
-            const alertsProcessed = Number(data.alertsProcessed || 0);
-            const notificationsSent = Number(data.notificationsSent || 0);
-            const notificationsSkipped = Number(data.notificationsSkipped || 0);
-            const notificationsFailed = Number(data.notificationsFailed || 0);
+            setOnline();
 
-            // Calculate derived notification performance statistics
-            const totalNotifications = notificationsSent + notificationsSkipped + notificationsFailed;
+            updateMetrics(data);
 
-            const successRate = totalNotifications === 0
-                ? 0
-                : Math.round((notificationsSent / totalNotifications) * 100);
+            updateEvents(data.recentEvents || []);
 
-            const failureRate = totalNotifications === 0
-                ? 0
-                : Math.round((notificationsFailed / totalNotifications) * 100);
-
-            // Update Operational Overview Cards
-            document.getElementById("alertsProcessed").textContent = alertsProcessed;
-            document.getElementById("notificationsSent").textContent = notificationsSent;
-            document.getElementById("notificationsSkipped").textContent = notificationsSkipped;
-            document.getElementById("notificationsFailed").textContent = notificationsFailed;
-
-            // Update Notification Performance Panel
-            document.getElementById("totalNotifications").textContent = totalNotifications;
-            document.getElementById("successRate").textContent = successRate + "%";
-            document.getElementById("failureRate").textContent = failureRate + "%";
-            document.getElementById("successProgressText").textContent = successRate + "%";
-            document.getElementById("successProgressBar").style.width = successRate + "%";
-
-            // Update Monitoring Information Panel
-            document.getElementById("serviceName").textContent = data.service || "alert-fatigue-backend";
-            document.getElementById("lastUpdated").textContent = new Date().toLocaleTimeString();
-
-            // Backend Connection Success State
-            backendAvailable = true;
-            document.getElementById("liveStatusText").textContent = "LIVE";
-            document.getElementById("liveStatus").classList.remove("offline");
-
-            document.getElementById("healthText").textContent = (data.monitoring || "ACTIVE").toUpperCase();
-            document.getElementById("healthBadge").classList.remove("offline");
-
-            document.getElementById("availabilityText").textContent = "100%";
-            document.getElementById("availabilityBar").style.width = "100%";
-
-            document.getElementById("errorMessage").style.display = "none";
-
-        } catch (error) {
-            // Backend Connection Error / Offline State
-            backendAvailable = false;
-            document.getElementById("liveStatusText").textContent = "OFFLINE";
-            document.getElementById("liveStatus").classList.add("offline");
-
-            document.getElementById("healthText").textContent = "OFFLINE";
-            document.getElementById("healthBadge").classList.add("offline");
-
-            document.getElementById("availabilityText").textContent = "0%";
-            document.getElementById("availabilityBar").style.width = "0%";
-
-            document.getElementById("errorMessage").style.display = "block";
         }
+
+        catch (error) {
+
+            setOffline();
+
+            console.error(error);
+
+        }
+
     }
 
-    // Initial fetch on page load
-    loadMonitoringData();
 
-    // Auto-refresh every 5 seconds
-    setInterval(loadMonitoringData, 5000);
+    function setOnline() {
+
+        const status =
+            document.getElementById("liveStatus");
+
+        status.classList.remove("offline");
+
+        document.getElementById("liveText")
+            .textContent = "LIVE";
+
+    }
+
+
+    function setOffline() {
+
+        const status =
+            document.getElementById("liveStatus");
+
+        status.classList.add("offline");
+
+        document.getElementById("liveText")
+            .textContent = "OFFLINE";
+
+    }
+
+
+    function number(value) {
+
+        return Number(value || 0)
+            .toLocaleString();
+
+    }
+
+
+    function updateMetrics(data) {
+
+        const processed =
+            Number(data.alertsProcessed || 0);
+
+        const sent =
+            Number(data.notificationsSent || 0);
+
+        const skipped =
+            Number(data.notificationsSkipped || 0);
+
+        const failed =
+            Number(data.notificationsFailed || 0);
+
+
+        document.getElementById("alertsProcessed")
+            .textContent = number(processed);
+
+        document.getElementById("notificationsSent")
+            .textContent = number(sent);
+
+        document.getElementById("notificationsSkipped")
+            .textContent = number(skipped);
+
+        document.getElementById("notificationsFailed")
+            .textContent = number(failed);
+
+
+        document.getElementById("totalAlerts")
+            .textContent = number(processed);
+
+
+        document.getElementById("uniqueAlerts")
+            .textContent =
+            number(data.uniqueAlerts || 0);
+
+
+        document.getElementById("duplicateAlerts")
+            .textContent =
+            number(data.duplicateAlerts || 0);
+
+
+        const suppression =
+            Number(data.suppressionRate || 0);
+
+
+        document.getElementById("suppressionRate")
+            .textContent =
+            suppression.toFixed(1) + "%";
+
+
+        document.getElementById("dedupRate")
+            .textContent =
+            suppression.toFixed(1) + "%";
+
+
+        document.getElementById("suppressionBar")
+            .style.width =
+            Math.min(suppression, 100) + "%";
+
+
+        const attempts =
+            sent + failed;
+
+
+        const successRate =
+            attempts > 0
+                ? (sent / attempts) * 100
+                : 0;
+
+
+        const failureRate =
+            attempts > 0
+                ? (failed / attempts) * 100
+                : 0;
+
+
+        document.getElementById("successRate")
+            .textContent =
+            successRate.toFixed(1) + "%";
+
+
+        document.getElementById("failureRate")
+            .textContent =
+            failureRate.toFixed(1) + "%";
+
+
+        document.getElementById("successBar")
+            .style.width =
+            Math.min(successRate, 100) + "%";
+
+
+        document.getElementById("failureBar")
+            .style.width =
+            Math.min(failureRate, 100) + "%";
+
+
+        document.getElementById("serviceName")
+            .textContent =
+            data.service || "—";
+
+
+        document.getElementById("monitoringState")
+            .textContent =
+            data.monitoring === "active"
+                ? "ACTIVE"
+                : "—";
+
+
+        document.getElementById("lastUpdate")
+            .textContent =
+            new Date().toLocaleTimeString();
+
+
+        calculateChannels(
+            data.recentEvents || []
+        );
+
+    }
+
+
+    function calculateChannels(events) {
+
+        let pagerDuty = 0;
+        let slack = 0;
+        let email = 0;
+        let suppressed = 0;
+
+
+        events.forEach(event => {
+
+            const channel =
+                String(event.channel || "").toUpperCase();
+
+            const delivery =
+                String(event.deliveryStatus || "").toUpperCase();
+
+            const decision =
+                String(event.notificationDecision || "").toUpperCase();
+
+
+            if (channel === "PAGERDUTY" &&
+                delivery === "SENT") {
+
+                pagerDuty++;
+
+            }
+
+
+            if (channel === "SLACK" &&
+                delivery === "SENT") {
+
+                slack++;
+
+            }
+
+
+            if (channel === "EMAIL" &&
+                delivery === "SENT") {
+
+                email++;
+
+            }
+
+
+            if (
+                decision === "SUPPRESSED" ||
+                delivery === "SUPPRESSED" ||
+                delivery === "SKIPPED"
+            ) {
+
+                suppressed++;
+
+            }
+
+        });
+
+
+        document.getElementById("pagerDutyCount")
+            .textContent = pagerDuty;
+
+
+        document.getElementById("slackCount")
+            .textContent = slack;
+
+
+        document.getElementById("emailCount")
+            .textContent = email;
+
+
+        document.getElementById("suppressedCount")
+            .textContent = suppressed;
+
+    }
+
+
+    function updateEvents(events) {
+
+        const table =
+            document.getElementById("activityTable");
+
+        const timeline =
+            document.getElementById("timeline");
+
+
+        if (!events || !events.length) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="11" class="empty">
+                        Waiting for alert activity...
+                    </td>
+                </tr>
+            `;
+
+
+            timeline.innerHTML = `
+                <div class="empty">
+                    Waiting for monitoring events...
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            events.slice(0, 20).map(event => {
+
+                const severity =
+                    String(event.severity || "—")
+                        .toUpperCase();
+
+
+                const delivery =
+                    String(event.deliveryStatus || "—")
+                        .toUpperCase();
+
+
+                let severityClass =
+                    severity.toLowerCase();
+
+
+                let deliveryClass = "";
+
+
+                if (
+                    delivery === "SENT" ||
+                    delivery === "SUCCESS"
+                ) {
+
+                    deliveryClass = "sent";
+
+                }
+
+                else if (
+                    delivery === "SKIPPED" ||
+                    delivery === "SUPPRESSED"
+                ) {
+
+                    deliveryClass = "skipped";
+
+                }
+
+                else if (delivery === "FAILED") {
+
+                    deliveryClass = "failed";
+
+                }
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${formatTime(event.timestamp)}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.alertId || "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.alertName || "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.service || "—"
+                            )}
+                        </td>
+
+                        <td>
+
+                            <span class="badge ${severityClass}">
+                                ${escapeHtml(severity)}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.priority || "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.alertStatus || "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${event.occurrenceCount || 1}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.notificationDecision || "—"
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                event.channel || "—"
+                            )}
+                        </td>
+
+                        <td>
+
+                            <span class="badge ${deliveryClass}">
+                                ${escapeHtml(delivery)}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }).join("");
+
+
+        timeline.innerHTML =
+            events.slice(0, 12).map(event => {
+
+                return `
+
+                    <div class="event">
+
+                        <div class="event-time">
+                            ${formatTime(event.timestamp)}
+                        </div>
+
+                        <div>
+
+                            <div class="event-title">
+
+                                ${escapeHtml(
+                                    event.type || "EVENT"
+                                )}
+
+                            </div>
+
+                            <div class="event-message">
+
+                                <strong>
+                                    ${escapeHtml(
+                                        event.alertName || "Alert"
+                                    )}
+                                </strong>
+
+                                ·
+
+                                ${escapeHtml(
+                                    event.service || "—"
+                                )}
+
+                                ·
+
+                                ${escapeHtml(
+                                    event.severity || "—"
+                                )}
+
+                                ·
+
+                                ${escapeHtml(
+                                    event.notificationDecision || "—"
+                                )}
+
+                                ·
+
+                                ${escapeHtml(
+                                    event.channel || "—"
+                                )}
+
+                                ·
+
+                                ${escapeHtml(
+                                    event.deliveryStatus || "—"
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+    }
+
+
+    function formatTime(timestamp) {
+
+        if (!timestamp) {
+            return "—";
+        }
+
+
+        const date =
+            new Date(timestamp);
+
+
+        if (isNaN(date.getTime())) {
+            return timestamp;
+        }
+
+
+        return date.toLocaleTimeString();
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    loadDashboard();
+
+
+    setInterval(
+        loadDashboard,
+        5000
+    );
+
 </script>
 
 </body>

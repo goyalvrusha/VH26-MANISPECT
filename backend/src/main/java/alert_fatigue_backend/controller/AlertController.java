@@ -32,9 +32,7 @@ public class AlertController {
         Alert processedAlert =
                 intelligenceService.process(alert);
 
-        monitoringService.recordAlertProcessed(
-                processedAlert.getId()
-        );
+        monitoringService.recordAlertProcessed(processedAlert);
 
         NotificationDecision decision =
                 intelligenceService.decideNotification(processedAlert);
@@ -48,21 +46,22 @@ public class AlertController {
         if (!decision.isShouldNotify()) {
 
             monitoringService.recordNotificationSkipped(
-                    processedAlert.getId(),
+                    processedAlert,
                     decision.getReason()
             );
 
         } else if ("SENT".equalsIgnoreCase(delivery.getStatus())) {
 
             monitoringService.recordNotificationSent(
-                    processedAlert.getId(),
+                    processedAlert,
                     delivery.getChannel()
             );
 
         } else {
 
             monitoringService.recordNotificationFailed(
-                    processedAlert.getId(),
+                    processedAlert,
+                    delivery.getChannel(),
                     delivery.getReason()
             );
         }
